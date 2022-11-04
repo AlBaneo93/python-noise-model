@@ -1,0 +1,39 @@
+import subprocess
+
+import numpy as np
+from numpy import ndarray
+
+import Constants
+
+
+def pca(data: ndarray) -> ndarray:
+    data_path: str = Constants.pca_data_path
+    save_before_apply_pca(data, data_path)
+    commands: list[str] = [*Constants.pca_loader, data_path, f"{Constants.num_components}"]
+
+    loaded_audio = subprocess.check_output(commands)
+    loaded_audio: str = loaded_audio.decode("utf-8")
+
+    return pca_post_process(loaded_audio)
+
+
+def pca_post_process(data: str) -> ndarray:
+    # data == 2d array
+    tmp = []
+    for d in data.splitlines():
+        tmp.append([float(dd) for dd in d.split(",")])
+    result: ndarray = np.array(tmp)
+
+    return result
+
+
+def save_before_apply_pca(data: ndarray, data_path: str):
+    print(f"data shape :: {data.shape}")
+    with open(data_path, "w", encoding="utf-8") as f:
+        for r in data:
+            f.writelines(r)
+            # for d in r:
+            #     f.write(f"{d},")
+            # f.write("\n")
+    print(f"[DONE] data write")
+
