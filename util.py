@@ -1,11 +1,10 @@
+import librosa
 import numpy as np
 from numpy import ndarray
 from tqdm import tqdm
-import librosa
 
-import Constants
-from Constants import sr, n_ffts, n_mels, n_step, offset, cut_time
-from Loader import loader
+from Constants import sr, n_ffts, n_mels, n_step, noise_offset, noise_cut_time
+from Loader import load_audio
 from melspec import get_mel
 
 
@@ -23,7 +22,7 @@ def sliding_window(arr: ndarray, sample_rate: int = 22050) -> ndarray:
 
 
 # Reshape the extracted features so to be 1-dim arrays
-def reshape_features(features):
+def reshape_features(features: ndarray) -> ndarray:
     if len(features) > 0:
         w, d = features[0].shape
         sz_features = len(features)
@@ -65,28 +64,40 @@ def amplitude_to_decibel(S, amin=1e-5, top_db=80.0):
 def extract_features(file) -> list:
     # extracted_features = []
 
-    loaded_data: ndarray = loader(file)
-    loaded_data = loaded_data[sr(0 + offset):sr * (cut_time + offset)]
+    loaded_data: ndarray = load_audio(file)
+    loaded_data = loaded_data[sr * noise_offset:sr * (noise_cut_time + noise_offset)]
     # signal_divided: ndarray = sliding_window(loaded_data)
 
     # Extract Mel-spectrogram from each divided signal
     mel_fbank = get_mel(sr=sr, n_ffts=n_ffts, n_mels=n_mels)
 
     # for signal in signal_divided:
-    data_mel = librosa.stft(y=loaded_data, n_fft=n_ffts, hop_length=n_step)
+    # NOTE : shape : (1025, 22)
+    data_mel: ndarray = librosa.stft(y=loaded_data, n_fft=n_ffts, hop_length=n_step)
+
     data_mel = np.dot(np.abs(data_mel.T), mel_fbank.T)
     data_mel = power_to_decibel(data_mel).T
     # print(n_mels)
     # # extracted_features.append(data_mel.T)
     # # TODO : 1D 형태가 되는지 확인하기
-    return data_mel
+    # NOTE : shape - (16,22) (reshape 적용 전 shape)
+    # data_mel = reshape_features(data_mel)
+    return my_reshape(data_mel)
     # return extracted_features # 3d array
+
+
+def my_reshape(arr: ndarray) -> list:
+    result = []
+    w, d = arr.shape
+    return np.reshape(arr, w * d).tolist()
 
 
 # Extract features from a list of files
 def get_features_from_files(list_files) -> list[list]:
     list_features = []
+
     for idx, file in tqdm(enumerate(list_files), total=len(list_files)):
+        # list_features = [*list_features, *extract_features(file)]
         list_features.append(extract_features(file))
     # NOTE : 2D Array shape
     return list_features

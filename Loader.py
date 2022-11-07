@@ -1,8 +1,5 @@
-import os
 import shutil
 import subprocess
-from multiprocessing import Pool
-import multiprocessing as mp
 from pathlib import Path
 
 import numpy as np
@@ -17,7 +14,7 @@ import Constants
 #     p.map(loader, file_list)
 
 
-def loader(file_name: str) -> ndarray:
+def load_audio(file_name: str) -> ndarray:
     output_name: str = make_output_name(file_name)
     commands: list[str] = [*Constants.audio_loader, file_name, output_name]
 
