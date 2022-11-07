@@ -74,9 +74,9 @@ def main():
     # 이전 리샘플링 결과 삭제
     clear_before_resample()
 
-    data_mel_normal_test = get_features_from_files(list_files_normal_test)
-    data_mel_anomal_test = get_features_from_files(list_files_anomal_test)
-    data_mel_reduce_test = get_features_from_files(list_files_reduce_test)
+    data_mel_normal_test = get_features_from_files(list_files_normal_test) # 2d array
+    data_mel_anomal_test = get_features_from_files(list_files_anomal_test) # 2d array
+    data_mel_reduce_test = get_features_from_files(list_files_reduce_test) # 2d array
 
     kph_dataset_test = data_mel_normal_test + data_mel_anomal_test + data_mel_reduce_test
     kph_labels_normal_test = np.zeros(len(data_mel_normal_test), dtype=int)

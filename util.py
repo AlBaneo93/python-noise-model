@@ -3,7 +3,8 @@ from numpy import ndarray
 from tqdm import tqdm
 import librosa
 
-from Constants import sr, n_ffts, n_mels, n_step
+import Constants
+from Constants import sr, n_ffts, n_mels, n_step, offset, cut_time
 from Loader import loader
 from melspec import get_mel
 
@@ -35,7 +36,7 @@ def reshape_features(features):
 
 
 # Convert power densities as decibel scale
-def power_to_decibel(S, *, ref=1.0, amin=1e-10, top_db=80.0):
+def power_to_decibel(S, *, ref=1.0, amin=1e-10, top_db=80.0) -> ndarray:
     magnitude = np.abs(S)
 
     # ref_value = np.max(magnitude)
@@ -62,27 +63,30 @@ def amplitude_to_decibel(S, amin=1e-5, top_db=80.0):
 
 # Extract features from an .wav file
 def extract_features(file) -> list:
-    extracted_features = []
+    # extracted_features = []
 
     loaded_data: ndarray = loader(file)
-
-    signal_divided: ndarray = sliding_window(loaded_data)
+    loaded_data = loaded_data[sr(0 + offset):sr * (cut_time + offset)]
+    # signal_divided: ndarray = sliding_window(loaded_data)
 
     # Extract Mel-spectrogram from each divided signal
     mel_fbank = get_mel(sr=sr, n_ffts=n_ffts, n_mels=n_mels)
 
-    for signal in signal_divided:
-        data_mel = librosa.stft(y=signal, n_fft=n_ffts, hop_length=n_step)
-        data_mel = np.dot(np.abs(data_mel.T), mel_fbank.T)
-        data_mel = power_to_decibel(data_mel)
-        extracted_features.append(data_mel.T)
-    return extracted_features
+    # for signal in signal_divided:
+    data_mel = librosa.stft(y=loaded_data, n_fft=n_ffts, hop_length=n_step)
+    data_mel = np.dot(np.abs(data_mel.T), mel_fbank.T)
+    data_mel = power_to_decibel(data_mel).T
+    # print(n_mels)
+    # # extracted_features.append(data_mel.T)
+    # # TODO : 1D 형태가 되는지 확인하기
+    return data_mel
+    # return extracted_features # 3d array
 
 
 # Extract features from a list of files
-def get_features_from_files(list_files) -> list:
+def get_features_from_files(list_files) -> list[list]:
     list_features = []
     for idx, file in tqdm(enumerate(list_files), total=len(list_files)):
-        t_result = extract_features(file)
-        list_features += t_result
+        list_features.append(extract_features(file))
+    # NOTE : 2D Array shape
     return list_features
