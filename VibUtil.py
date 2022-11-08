@@ -1,5 +1,7 @@
+import os
+
 import numpy as np
-from tqdm import tqdm
+from parmap import parmap
 
 from Constants import vibe_offset, vibe_cut_time, vibe_sr
 
@@ -27,6 +29,8 @@ def extract_vib_features(file: str) -> list:
 
     # 데이터 읽기
     vib_data = np.array(load_vib_file(file))
+    if len(vib_data) / vibe_sr < vibe_cut_time:
+        return []
     # 8초로 자르기
     vib_data = vib_data[vibe_sr * vibe_offset: vibe_sr * (vibe_cut_time + vibe_offset)]
 
@@ -37,8 +41,15 @@ def extract_vib_features(file: str) -> list:
     return np.abs(fft).tolist()
 
 
-def get_features_from_files_vib(list_files: list[list]):
-    list_features = []
-    for idx, file in tqdm(enumerate(list_files), total=len(list_files)):
-        list_features.append(extract_vib_features(file))
-    return list_features
+# def get_features_from_files_vib(list_files: list[list]):
+#     list_features = []
+#     for idx, file in tqdm(enumerate(list_files), total=len(list_files)):
+#         t_result = extract_vib_features(file)
+#         if len(t_result) == 0:
+#             continue
+#         list_features.append(t_result)
+#     return list_features
+
+
+def parallel_get_features_from_files_vib(list_files: list[str]) -> list[list]:
+    return parmap.map(extract_vib_features, list_files, pm_pbar=True, pm_processes=os.cpu_count())
