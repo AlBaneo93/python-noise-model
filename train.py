@@ -19,13 +19,13 @@ def main():
     #### Load acoustic features from wave streams
 
     print('[LOAD] Extracting features from train dataset: {}'.format(Constants.path_train))
-    train_dir_data = Constants.path_train  # "./dataset/java/CS_MOTORNOISE_DATA/train"
-    list_files_normal = glob.glob(os.path.join(train_dir_data, 'normal_*.wav'))
-    list_files_anomal = glob.glob(os.path.join(train_dir_data, 'anomal_*.wav'))
-    list_files_reduce = glob.glob(os.path.join(train_dir_data, 'reducer_*.wav'))
+    list_files_normal = glob.glob(os.path.join(Constants.path_train, 'normal_*.wav'))
+    list_files_anomal = glob.glob(os.path.join(Constants.path_train, 'anomal_*.wav'))
+    list_files_reduce = glob.glob(os.path.join(Constants.path_train, 'reducer_*.wav'))
     list_files_normal.sort()
     list_files_anomal.sort()
     list_files_reduce.sort()
+
 
     print(f"데이터 추출 시작")
     # NOTE : 2D Array이어야 함
@@ -49,7 +49,7 @@ def main():
     kph_labels_anomal = np.ones(len(data_mel_anomal), dtype=int)
     kph_labels_reduce = np.ones(len(data_mel_reduce), dtype=int) * 2
     kph_labels = np.array(list(kph_labels_normal) + list(kph_labels_anomal) + list(kph_labels_reduce))
-
+    a =1
     # # Test dataset
     #
     # print('[LOAD] Extracting features from test dataset: {}'.format(path_test))

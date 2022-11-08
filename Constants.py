@@ -12,8 +12,8 @@ svm_cost = 1
 svm_type = 0
 svm_kernel = 0
 
-# path_train = "/data/CS_MOTORNOISE_DATA"
-path_train = "/data/test"
+path_train = "/data/CS_MOTORNOISE_DATA"
+# path_train = "/data/test"
 path_test = "/data/CS_MORTORNOISE_TEST_DATA"
 # svm_model = "/data/total_file_pca_svm_trained.model"
 noise_model_save_path = "/data/total_file_pca_svm_trained.model"
@@ -22,10 +22,11 @@ vibe_sr = 2048
 audio_loader = ["java", "-jar", "/data/AudioLoader_New.jar"]
 pca_loader = ["java", "-jar", "/data/PCA.jar"]
 resample_result_path = "/data/resample_result"
-num_components = 2
+num_components = 50
 pca_data_path = "/data/before_pca.txt"
+after_pca_data_path = "/data/after_pca.txt"
 
 noise_offset = 0
-noise_cut_time = 1
-vibe_cut_time = 1
+noise_cut_time = 8
 vibe_offset = 0
+vibe_cut_time = 8

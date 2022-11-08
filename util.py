@@ -65,6 +65,8 @@ def extract_features(file) -> list:
     # extracted_features = []
 
     loaded_data: ndarray = load_audio(file)
+    if len(loaded_data) / sr < noise_cut_time:
+        return []
     loaded_data = loaded_data[sr * noise_offset:sr * (noise_cut_time + noise_offset)]
     # signal_divided: ndarray = sliding_window(loaded_data)
 
@@ -87,6 +89,11 @@ def extract_features(file) -> list:
 
 
 def my_reshape(arr: ndarray) -> list:
+    """
+
+    :param arr: 2D ndarray
+    :return: 1D list
+    """
     result = []
     w, d = arr.shape
     return np.reshape(arr, w * d).tolist()
@@ -96,8 +103,18 @@ def my_reshape(arr: ndarray) -> list:
 def get_features_from_files(list_files) -> list[list]:
     list_features = []
 
+    before_t_result = 0
     for idx, file in tqdm(enumerate(list_files), total=len(list_files)):
         # list_features = [*list_features, *extract_features(file)]
-        list_features.append(extract_features(file))
+        t_result = extract_features(file)
+        if len(t_result) == 0:
+            continue
+
+        if before_t_result != 0:
+            if before_t_result != len(t_result):
+                print(f"before len : {before_t_result} / current len : {len(t_result)}")
+                break
+        before_t_result = len(t_result)
+        list_features.append(t_result)
     # NOTE : 2D Array shape
     return list_features
