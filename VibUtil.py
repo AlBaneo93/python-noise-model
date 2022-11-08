@@ -52,4 +52,5 @@ def extract_vib_features(file: str) -> list:
 
 
 def parallel_get_features_from_files_vib(list_files: list[str]) -> list[list]:
-    return parmap.map(extract_vib_features, list_files, pm_pbar=True, pm_processes=os.cpu_count())
+    result = parmap.map(extract_vib_features, list_files, pm_pbar=True, pm_processes=os.cpu_count())
+    return list(filter(lambda arr: len(arr) != 0, result))

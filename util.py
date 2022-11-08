@@ -120,4 +120,5 @@ def my_reshape(arr: ndarray) -> list:
 
 
 def parallel_get_features_from_files(list_files: list[str]) -> list[list]:
-    return parmap.map(extract_features, list_files, pm_pbar=True, pm_processes=os.cpu_count())
+    result = parmap.map(extract_features, list_files, pm_pbar=True, pm_processes=os.cpu_count())
+    return list(filter(lambda arr: len(arr) != 0, result))

@@ -15,7 +15,6 @@ def pca(data: list[list], before_save_path: str, result_save_path: str) -> ndarr
     :return: pca가 적용된 데이터
     """
     save_before_apply_pca(data, before_save_path)
-    a = 1
     commands: list[str] = [*pca_loader, before_save_path, f"{num_components}"]
 
     loaded_audio = subprocess.check_output(commands)
