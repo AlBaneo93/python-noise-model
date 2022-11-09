@@ -64,13 +64,10 @@ def amplitude_to_decibel(S, amin=1e-5, top_db=80.0):
 
 # Extract features from an .wav file
 def extract_features(file) -> list:
-    # extracted_features = []
-
     loaded_data: ndarray = load_audio(file)
+    loaded_data = loaded_data[int(noise_sr * noise_offset):int(noise_sr * (noise_cut_time + noise_offset))]
     if len(loaded_data) / noise_sr < noise_cut_time:
         return []
-    loaded_data = loaded_data[noise_sr * noise_offset:noise_sr * (noise_cut_time + noise_offset)]
-    # signal_divided: ndarray = sliding_window(loaded_data)
 
     # Extract Mel-spectrogram from each divided signal
     mel_fbank = get_mel(sr=noise_sr, n_ffts=n_ffts, n_mels=n_mels)
@@ -81,13 +78,10 @@ def extract_features(file) -> list:
 
     data_mel = np.dot(np.abs(data_mel.T), mel_fbank.T)
     data_mel = power_to_decibel(data_mel).T
-    # print(n_mels)
-    # # extracted_features.append(data_mel.T)
+
     # # TODO : 1D 형태가 되는지 확인하기
-    # NOTE : shape - (16,22) (reshape 적용 전 shape)
-    # data_mel = reshape_features(data_mel)
+
     return my_reshape(data_mel)
-    # return extracted_features # 3d array
 
 
 def my_reshape(arr: ndarray) -> list:
@@ -101,24 +95,8 @@ def my_reshape(arr: ndarray) -> list:
     return np.reshape(arr, w * d).tolist()
 
 
-# Extract features from a list of files
-# def get_features_from_files(list_files) -> list[list]:
-#     list_features = []
-#
-#     pool = Pool()
-#
-#     before_t_result = 0
-#     for idx, file in tqdm(enumerate(list_files), total=len(list_files)):
-#         # list_features = [*list_features, *extract_features(file)]
-#         t_result = extract_features(file)
-#         if len(t_result) == 0:
-#             continue
-#
-#         list_features.append(t_result)
-#     # NOTE : 2D Array shape
-#     return list_features
-
-
 def parallel_get_features_from_files(list_files: list[str]) -> list[list]:
+    if len(list_files) == 0:
+        return []
     result = parmap.map(extract_features, list_files, pm_pbar=True, pm_processes=os.cpu_count())
     return list(filter(lambda arr: len(arr) != 0, result))

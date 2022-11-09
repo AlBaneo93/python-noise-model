@@ -29,26 +29,16 @@ def extract_vib_features(file: str) -> list:
 
     # 데이터 읽기
     vib_data = np.array(load_vib_file(file))
+    vib_data = vib_data[int(vibe_sr * vibe_offset): int(vibe_sr * (vibe_cut_time + vibe_offset))]
     if len(vib_data) / vibe_sr < vibe_cut_time:
         return []
     # 8초로 자르기
-    vib_data = vib_data[vibe_sr * vibe_offset: vibe_sr * (vibe_cut_time + vibe_offset)]
 
     # for signal in sliding_window(vib_data):
     fft = np.fft.fft(vib_data)
     # extracted_features.append()
 
     return np.abs(fft).tolist()
-
-
-# def get_features_from_files_vib(list_files: list[list]):
-#     list_features = []
-#     for idx, file in tqdm(enumerate(list_files), total=len(list_files)):
-#         t_result = extract_vib_features(file)
-#         if len(t_result) == 0:
-#             continue
-#         list_features.append(t_result)
-#     return list_features
 
 
 def parallel_get_features_from_files_vib(list_files: list[str]) -> list[list]:
