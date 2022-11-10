@@ -14,7 +14,6 @@ from PCA_Loader import pca
 from VibUtil import parallel_get_features_from_files_vib
 
 
-#### Import libraries
 def get_test_dataset_vibe() -> tuple[ndarray, list[list]]:
     print('[VIBE][LOAD] Extracting features from test dataset: {}'.format(Constants.path_test))
     list_files_normal_test = glob.glob(os.path.join(Constants.path_test, 'normal_*.asc'))
@@ -23,7 +22,7 @@ def get_test_dataset_vibe() -> tuple[ndarray, list[list]]:
     list_files_normal_test.sort()
     list_files_anomal_test.sort()
     list_files_reduce_test.sort()
-    if len(list_files_normal) + len(list_files_anomal) + len(list_files_reduce) != 0:
+    if len(list_files_normal_test) + len(list_files_anomal_test) + len(list_files_reduce_test) != 0:
         data_mel_normal_test = parallel_get_features_from_files_vib(list_files_normal_test)
         data_mel_anomal_test = parallel_get_features_from_files_vib(list_files_anomal_test)
         data_mel_reduce_test = parallel_get_features_from_files_vib(list_files_reduce_test)
@@ -41,7 +40,7 @@ def get_test_dataset_vibe() -> tuple[ndarray, list[list]]:
     return ([], [])
 
 
-def get_train_dataset_vibe() -> tuple:
+def get_train_dataset_vibe() -> tuple[ndarray, list]:
     # Train dataset
     print('[LOAD] Extracting features from train dataset: {}'.format(path_train))
 
@@ -65,7 +64,11 @@ def get_train_dataset_vibe() -> tuple:
         kph_labels_reduce = np.ones(len(data_mel_reduce), dtype=int) * 2
         kph_labels = np.array(list(kph_labels_normal) + list(kph_labels_anomal) + list(kph_labels_reduce))
 
-        kph_dataset = pca(kph_dataset, Constants.vibe_before_pca_data_path, Constants.vibe_after_pca_data_path)
+        kph_dataset = pca(kph_dataset,
+                          Constants.vibe_before_pca_data_path,
+                          Constants.vibe_after_pca_data_path,
+                          Constants.vibe_pc_value_path,
+                          Constants.vibe_mean_value_path)
         print(f'{len(kph_dataset)} files are loaded from the train dataset')
         return (kph_labels, kph_dataset)
 

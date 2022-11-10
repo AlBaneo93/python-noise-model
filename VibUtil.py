@@ -15,7 +15,6 @@ from Constants import vibe_offset, vibe_cut_time, vibe_sr
 #         result.append(np.array(tmp_window))
 #         idx += step_size
 
-
 def load_vib_file(file: str) -> list[float]:
     vib_data: list[float] = []
     with open(file, 'r', encoding='utf-8') as f:
@@ -42,5 +41,6 @@ def extract_vib_features(file: str) -> list:
 
 
 def parallel_get_features_from_files_vib(list_files: list[str]) -> list[list]:
+
     result = parmap.map(extract_vib_features, list_files, pm_pbar=True, pm_processes=os.cpu_count())
     return list(filter(lambda arr: len(arr) != 0, result))

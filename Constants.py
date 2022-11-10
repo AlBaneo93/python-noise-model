@@ -5,18 +5,27 @@ n_wins = 1024
 n_mels = 16  # 64
 n_mfcc = 20
 noise_sr = 22050
-noise_before_pca_data_path = "/data/noise_before_pca.txt"
-noise_after_pca_data_path = "/data/noise_after_pca.txt"
+
 audio_loader = ["java", "-jar", "/data/AudioLoader_New.jar"]
 noise_model_save_path = "/data/noise_svm_trained.model"
+
+noise_before_pca_data_path = "/data/noise_before_pca.txt"
+noise_after_pca_data_path = "/data/noise_after_pca.txt"
+noise_pc_value_path = "/data/noise_pc_value.txt"
+noise_mean_value_path = "/data/noise_mean_value.txt"
+
 resample_result_path = "/data/resample_result"
 noise_offset = 0.25
 noise_cut_time = 8
 
 # For VIBE
 vib_model_save_path = "/data/vib_svm_trained.model"
+
 vibe_before_pca_data_path = "/data/vibe_before_pca.txt"
 vibe_after_pca_data_path = "/data/vibe_after_pca.txt"
+vibe_pc_value_path = "/data/vibe_pc_value.txt"
+vibe_mean_value_path = "/data/vibe_mean_value.txt"
+
 vibe_sr = 2400
 vibe_offset = 0.25
 vibe_cut_time = 8

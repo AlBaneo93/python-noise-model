@@ -5,6 +5,7 @@ import os
 # Python libraries
 import numpy as np
 from libsvm.svmutil import svm_train, svm_save_model, svm_predict
+from numpy import ndarray
 
 import Constants
 from PCA_Loader import pca
@@ -12,8 +13,7 @@ from PCA_Loader import pca
 from util import parallel_get_features_from_files
 
 
-#### Import libraries
-def get_train_dataset_noise() -> tuple:
+def get_train_dataset_noise() -> tuple[ndarray, list]:
     print('[NOISE][LOAD] Extracting features from train dataset: {}'.format(Constants.path_train))
     list_files_normal = glob.glob(os.path.join(Constants.path_train, 'normal_*.wav'))
     list_files_anomal = glob.glob(os.path.join(Constants.path_train, 'anomal_*.wav'))
@@ -52,15 +52,18 @@ def get_train_dataset_noise() -> tuple:
         # reshape the train dataset
         # kph_dataset_reshaped = reshape_features(kph_dataset)
         # NOTE : 2D array여야 함
-        kph_dataset_reshaped = pca(kph_dataset, Constants.noise_before_pca_data_path,
-                                   Constants.noise_after_pca_data_path)
+        kph_dataset_reshaped = pca(kph_dataset,
+                                   Constants.noise_before_pca_data_path,
+                                   Constants.noise_after_pca_data_path,
+                                   Constants.noise_pc_value_path,
+                                   Constants.noise_mean_value_path)
 
         return (kph_labels, kph_dataset_reshaped)
 
     return ([], [])
 
 
-def get_test_dataset_noise() -> tuple:
+def get_test_dataset_noise() -> tuple[ndarray, list]:
     # Test dataset
     print('[NOISE][LOAD] Extracting features from test dataset: {}'.format(Constants.path_test))
 
@@ -71,7 +74,7 @@ def get_test_dataset_noise() -> tuple:
     list_files_anomal_test.sort()
     list_files_reduce_test.sort()
 
-    if len(list_files_normal) + len(list_files_anomal) + len(list_files_reduce) != 0:
+    if len(list_files_normal_test) + len(list_files_anomal_test) + len(list_files_reduce_test) != 0:
         data_mel_normal_test = parallel_get_features_from_files(list_files_normal_test)  # 2d array
         data_mel_anomal_test = parallel_get_features_from_files(list_files_anomal_test)  # 2d array
         data_mel_reduce_test = parallel_get_features_from_files(list_files_reduce_test)  # 2d array

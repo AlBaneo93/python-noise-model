@@ -6,21 +6,23 @@ from numpy import ndarray
 from Constants import pca_loader, num_components
 
 
-def pca(data: list[list], before_save_path: str, result_save_path: str) -> ndarray:
+def pca(data: list[list], before_pca_data_path: str, after_pca_data_path: str, pc_value_path: str,
+        mean_value_path: str) -> ndarray:
     """
 
-    :param data: pca를 적용할 데이터
-    :param before_save_path: pca 모듈이 부르게 될 데이터의 위치
-    :param result_save_path: [for test] pca 모듈이 저장한 pca가 적용된 데이터의 위치
-    :return: pca가 적용된 데이터
+    :param data:
+    :param before_pca_data_path:
+    :param pc_value_path:
+    :param mean_value_path:
+    :return:
     """
-    save_before_apply_pca(data, before_save_path)
-    commands: list[str] = [*pca_loader, before_save_path, f"{num_components}", result_save_path]
+    save_before_apply_pca(data, before_pca_data_path)
+    commands: list[str] = [*pca_loader, before_pca_data_path, f"{num_components}", pc_value_path, mean_value_path]
 
     loaded_audio = subprocess.check_output(commands)
     loaded_audio: str = loaded_audio.decode("utf-8")
     result: ndarray = pca_post_process(loaded_audio)
-    save_after_pca(result, result_save_path)
+    save_after_pca(result, after_pca_data_path)
     return result
 
 

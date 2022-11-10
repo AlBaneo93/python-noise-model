@@ -66,6 +66,7 @@ def amplitude_to_decibel(S, amin=1e-5, top_db=80.0):
 def extract_features(file) -> list:
     loaded_data: ndarray = load_audio(file)
     loaded_data = loaded_data[int(noise_sr * noise_offset):int(noise_sr * (noise_cut_time + noise_offset))]
+
     if len(loaded_data) / noise_sr < noise_cut_time:
         return []
 
