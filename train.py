@@ -85,6 +85,10 @@ def get_test_dataset_noise() -> tuple[ndarray, list]:
         kph_labels_reduce_test = np.ones(len(data_mel_reduce_test), dtype=int) * 2
         kph_labels_test = np.array(
             list(kph_labels_normal_test) + list(kph_labels_anomal_test) + list(kph_labels_reduce_test))
+
+        # TODO : 테스트 데이터에 대한 경로 지정하기
+        kph_dataset_test = pca(kph_dataset_test, "", "", "", "")
+
         return (kph_labels_test, kph_dataset_test)
 
     return ([], [])
@@ -95,7 +99,7 @@ def main():
 
     # Training the SVM model
     train_label, train_dataset = get_train_dataset_noise()
-    if len(train_label) + len(train_dataset) != 0:
+    if len(train_dataset) != 0:
         print(f"[NOISE] 학습 시작")
         svm_model = svm_train(train_label, train_dataset, f'-c {Constants.svm_cost} -t {Constants.svm_kernel} -q')
         print(f"[NOISE] 학습 종료")
@@ -105,11 +109,11 @@ def main():
 
         print('[NOISE][DONE] SVM model has been trained and saved')
 
-        # test_labels, test_dataset = get_test_dataset_noise()
-        #
-        # # Evaluation with features of the test dataset
-        # p_label, p_acc, p_val = svm_predict(test_labels, test_dataset, svm_model)
-        # print('[NOISE] Accuracy: {}'.format(p_val))
+        test_labels, test_dataset = get_test_dataset_noise()
+
+        # Evaluation with features of the test dataset
+        p_label, p_acc, p_val = svm_predict(test_labels, test_dataset, svm_model)
+        print('[NOISE] Accuracy: {}'.format(p_val))
     else:
         print(f"[NOISE] 오류 발생")
 
