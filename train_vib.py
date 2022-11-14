@@ -16,9 +16,9 @@ from VibUtil import parallel_get_features_from_files_vib
 
 def get_test_dataset_vibe() -> tuple[ndarray, list[list]]:
     print('[VIBE][LOAD] Extracting features from test dataset: {}'.format(Constants.path_test))
-    list_files_normal_test = glob.glob(os.path.join(Constants.path_test, 'normal_*.asc'))
-    list_files_anomal_test = glob.glob(os.path.join(Constants.path_test, 'anomal_*.asc'))
-    list_files_reduce_test = glob.glob(os.path.join(Constants.path_test, 'reducer_*.asc'))
+    list_files_normal_test = glob.glob(os.path.join(Constants.path_test, 'Test_normal_*.asc'))
+    list_files_anomal_test = glob.glob(os.path.join(Constants.path_test, 'Test_anomal_*.asc'))
+    list_files_reduce_test = glob.glob(os.path.join(Constants.path_test, 'Test_reducer_*.asc'))
     list_files_normal_test.sort()
     list_files_anomal_test.sort()
     list_files_reduce_test.sort()

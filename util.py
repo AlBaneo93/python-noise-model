@@ -8,19 +8,20 @@ from parmap import parmap
 from Constants import noise_sr, n_ffts, n_mels, n_step, noise_offset, noise_cut_time
 from Loader import load_audio
 from melspec import get_mel
+from model_runner import Duration
 
 
-def sliding_window(arr: ndarray, sample_rate: int = 22050) -> ndarray:
-    step_size = sample_rate * 4
-    win_size = sample_rate * 8
-    idx = 0
-    result: list[list] = []
-    while arr.size > idx + win_size:
-        tmp_window = arr[idx: idx + win_size]
-        result.append(tmp_window)
-        idx += step_size
-
-    return np.array(result)
+# def sliding_window(arr: ndarray, sample_rate: int = 22050) -> ndarray:
+#     step_size = sample_rate * 4
+#     win_size = sample_rate * 8
+#     idx = 0
+#     result: list[list] = []
+#     while arr.size > idx + win_size:
+#         tmp_window = arr[idx: idx + win_size]
+#         result.append(tmp_window)
+#         idx += step_size
+#
+#     return np.array(result)
 
 
 # Reshape the extracted features so to be 1-dim arrays
@@ -63,6 +64,7 @@ def amplitude_to_decibel(S, amin=1e-5, top_db=80.0):
 
 
 # Extract features from an .wav file
+@Duration
 def extract_features(file) -> list:
     loaded_data: ndarray = load_audio(file)
     loaded_data = loaded_data[int(noise_sr * noise_offset):int(noise_sr * (noise_cut_time + noise_offset))]
@@ -91,11 +93,12 @@ def my_reshape(arr: ndarray) -> list:
     :param arr: 2D ndarray
     :return: 1D list
     """
-    result = []
+    # result = []
     w, d = arr.shape
     return np.reshape(arr, w * d).tolist()
 
 
+@Duration
 def parallel_get_features_from_files(list_files: list[str]) -> list[list]:
     if len(list_files) == 0:
         return []

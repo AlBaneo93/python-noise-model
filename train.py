@@ -9,11 +9,13 @@ from numpy import ndarray
 
 import Constants
 from PCA_Loader import pca
+from model_runner import Duration
 # Sound processing
 from util import parallel_get_features_from_files
 
 
-def get_train_dataset_noise() -> tuple[ndarray, list]:
+@Duration
+def get_train_dataset_noise() -> tuple[ndarray, ndarray]:
     print('[NOISE][LOAD] Extracting features from train dataset: {}'.format(Constants.path_train))
     list_files_normal = glob.glob(os.path.join(Constants.path_train, 'normal_*.wav'))
     list_files_anomal = glob.glob(os.path.join(Constants.path_train, 'anomal_*.wav'))
@@ -58,18 +60,19 @@ def get_train_dataset_noise() -> tuple[ndarray, list]:
                                    Constants.noise_pc_value_path,
                                    Constants.noise_mean_value_path)
 
-        return (kph_labels, kph_dataset_reshaped)
+        return kph_labels, kph_dataset_reshaped
 
-    return ([], [])
+    return np.array([]), np.array([])
 
 
-def get_test_dataset_noise() -> tuple[ndarray, list]:
+@Duration
+def get_test_dataset_noise() -> tuple[ndarray, ndarray]:
     # Test dataset
     print('[NOISE][LOAD] Extracting features from test dataset: {}'.format(Constants.path_test))
 
-    list_files_normal_test = glob.glob(os.path.join(Constants.path_test, 'normal_*.wav'))
-    list_files_anomal_test = glob.glob(os.path.join(Constants.path_test, 'anomal_*.wav'))
-    list_files_reduce_test = glob.glob(os.path.join(Constants.path_test, 'reducer_*.wav'))
+    list_files_normal_test = glob.glob(os.path.join(Constants.path_test, 'Test_normal_*.wav'))
+    list_files_anomal_test = glob.glob(os.path.join(Constants.path_test, 'Test_anomal_*.wav'))
+    list_files_reduce_test = glob.glob(os.path.join(Constants.path_test, 'Test_reducer_*.wav'))
     list_files_normal_test.sort()
     list_files_anomal_test.sort()
     list_files_reduce_test.sort()
@@ -89,11 +92,12 @@ def get_test_dataset_noise() -> tuple[ndarray, list]:
         # TODO : 테스트 데이터에 대한 경로 지정하기
         kph_dataset_test = pca(kph_dataset_test, "", "", "", "")
 
-        return (kph_labels_test, kph_dataset_test)
+        return kph_labels_test, kph_dataset_test
 
-    return ([], [])
+    return np.array([]), np.array([])
 
 
+@Duration
 def main():
     #### Load acoustic features from wave streams
 

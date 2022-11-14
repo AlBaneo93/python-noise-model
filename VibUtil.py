@@ -4,6 +4,7 @@ import numpy as np
 from parmap import parmap
 
 from Constants import vibe_offset, vibe_cut_time, vibe_sr
+from model_runner import Duration
 
 
 # def sliding_window(arr, win_size=88200, step_size=44100, copy=False):
@@ -15,6 +16,7 @@ from Constants import vibe_offset, vibe_cut_time, vibe_sr
 #         result.append(np.array(tmp_window))
 #         idx += step_size
 
+@Duration
 def load_vib_file(file: str) -> list[float]:
     vib_data: list[float] = []
     with open(file, 'r', encoding='utf-8') as f:
@@ -23,6 +25,7 @@ def load_vib_file(file: str) -> list[float]:
     return vib_data
 
 
+@Duration
 def extract_vib_features(file: str) -> list:
     # extracted_features = []
 
@@ -40,6 +43,7 @@ def extract_vib_features(file: str) -> list:
     return np.abs(fft).tolist()
 
 
+@Duration
 def parallel_get_features_from_files_vib(list_files: list[str]) -> list[list]:
 
     result = parmap.map(extract_vib_features, list_files, pm_pbar=True, pm_processes=os.cpu_count())
