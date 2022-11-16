@@ -6,8 +6,8 @@ import numpy as np
 from numpy import ndarray
 
 import Constants
+from Duration import Duration
 from Logger import logger
-from model_runner import Duration
 
 
 # def load_parallel(file_list: list[str]):

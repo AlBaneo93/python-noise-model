@@ -5,10 +5,10 @@ from numpy import ndarray
 
 from Constants import pca_loader, num_components
 from Logger import logger
-from model_runner import Duration
+from Duration import Duration
 
 
-@Duration
+
 def pca(data: list[list], before_pca_data_path: str, after_pca_data_path: str, pc_value_path: str,
         mean_value_path: str) -> ndarray:
     """
@@ -32,7 +32,7 @@ def pca(data: list[list], before_pca_data_path: str, after_pca_data_path: str, p
     return result
 
 
-@Duration
+
 def pca_post_process(data: str) -> ndarray:
     """
 
@@ -48,7 +48,7 @@ def pca_post_process(data: str) -> ndarray:
     return result
 
 
-@Duration
+
 def save_before_apply_pca(data: list[list], data_path: str) -> None:
     """
 
@@ -63,7 +63,7 @@ def save_before_apply_pca(data: list[list], data_path: str) -> None:
     print(f"[DONE] data write in {data_path}")
 
 
-@Duration
+
 def save_after_pca(data: ndarray, after_save_path: str) -> None:
     """
 

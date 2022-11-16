@@ -8,8 +8,8 @@ from libsvm.svmutil import svm_train, svm_save_model, svm_predict
 from numpy import ndarray
 
 import Constants
+from Duration import Duration
 from PCA_Loader import pca
-from model_runner import Duration
 # Sound processing
 from util import parallel_get_features_from_files
 
@@ -28,6 +28,7 @@ def get_train_dataset_noise() -> tuple[ndarray, ndarray]:
         print(f"[NOISE] 데이터 추출 시작")
         # NOTE : 2D Array이어야 함
         data_mel_normal = parallel_get_features_from_files(list_files_normal)
+        a=1
         # data_mel_normal = get_features_from_files(list_files_normal)
         # NOTE : 2D Array이어야 함
         data_mel_anomal = parallel_get_features_from_files(list_files_anomal)
