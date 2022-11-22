@@ -6,8 +6,7 @@ import numpy as np
 from numpy import ndarray
 
 import Constants
-from Duration import Duration
-from Logger import logger
+from Decorators import Duration
 
 
 # def load_parallel(file_list: list[str]):
@@ -20,12 +19,12 @@ from Logger import logger
 def load_audio(file_name: str) -> ndarray:
     output_name: str = make_output_name(file_name)
 
-    logger.info("Run Audio Load task")
+    # print("Run Audio Load task")
     commands: list[str] = [*Constants.audio_loader, file_name, output_name]
 
     loaded_audio = subprocess.check_output(commands)
     loaded_audio = loaded_audio.decode("utf-8")
-    logger.info("Done Audio Load task")
+    # print("Done Audio Load task")
     return post_process(loaded_audio)
 
 

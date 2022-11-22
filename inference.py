@@ -44,21 +44,21 @@
 #         try:
 #             dir_data = path_test
 #             list_files_normal_test = glob.glob(os.path.join(dir_data, 'normal_*.wav'))
-#             list_files_anomal_test = glob.glob(os.path.join(dir_data, 'anomal_*.wav'))
+#             list_files_abnormal_test = glob.glob(os.path.join(dir_data, 'abnormal_*.wav'))
 #             list_files_reduce_test = glob.glob(os.path.join(dir_data, 'reducer_*.wav'))
 #             list_files_normal_test.sort()
-#             list_files_anomal_test.sort()
+#             list_files_abnormal_test.sort()
 #             list_files_reduce_test.sort()
 #
 #             data_mel_normal_test = get_features_from_files(list_files_normal_test)
-#             data_mel_anomal_test = get_features_from_files(list_files_anomal_test)
+#             data_mel_abnormal_test = get_features_from_files(list_files_abnormal_test)
 #             data_mel_reduce_test = get_features_from_files(list_files_reduce_test)
-#             data = data_mel_normal_test + data_mel_anomal_test + data_mel_reduce_test
+#             data = data_mel_normal_test + data_mel_abnormal_test + data_mel_reduce_test
 #
 #             kph_labels_normal_test = np.zeros(len(data_mel_normal_test), dtype=int)
-#             kph_labels_anomal_test = np.ones(len(data_mel_anomal_test), dtype=int)
+#             kph_labels_abnormal_test = np.ones(len(data_mel_abnormal_test), dtype=int)
 #             kph_labels_reduce_test = np.ones(len(data_mel_reduce_test), dtype=int) * 2
-#             label = np.array(list(kph_labels_normal_test) + list(kph_labels_anomal_test) + list(kph_labels_reduce_test))
+#             label = np.array(list(kph_labels_normal_test) + list(kph_labels_abnormal_test) + list(kph_labels_reduce_test))
 #
 #             # Save the extracted features
 #             np.savez('feature_mel_test.npz', data=data, label=label)

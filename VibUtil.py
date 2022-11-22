@@ -4,7 +4,7 @@ import numpy as np
 from parmap import parmap
 
 from Constants import vibe_offset, vibe_cut_time, vibe_sr
-from Duration import Duration
+from Decorators import Duration
 
 
 # def sliding_window(arr, win_size=88200, step_size=44100, copy=False):
@@ -31,6 +31,9 @@ def extract_vib_features(file: str) -> list:
     # 데이터 읽기
     vib_data = np.array(load_vib_file(file))
     vib_data = vib_data[int(vibe_sr * vibe_offset): int(vibe_sr * (vibe_cut_time + vibe_offset))]
+
+    # print(f"file -- {file} / load_length :: {len(vib_data)}")
+
     if len(vib_data) / vibe_sr < vibe_cut_time:
         return []
     # 8초로 자르기
@@ -43,6 +46,5 @@ def extract_vib_features(file: str) -> list:
 
 
 def parallel_get_features_from_files_vib(list_files: list[str]) -> list[list]:
-
     result = parmap.map(extract_vib_features, list_files, pm_pbar=True, pm_processes=os.cpu_count())
     return list(filter(lambda arr: len(arr) != 0, result))

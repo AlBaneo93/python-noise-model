@@ -4,15 +4,13 @@ import numpy as np
 from numpy import ndarray
 
 from Constants import pca_loader, num_components
-from Logger import logger
-from Duration import Duration
 
 
-
-def pca(data: list[list], before_pca_data_path: str, after_pca_data_path: str, pc_value_path: str,
-        mean_value_path: str) -> ndarray:
+def pca(data: list[list], before_pca_data_path: str, after_pca_data_path: str, pc_value_path: str, mean_value_path: str,
+        pca_result_path: str) -> ndarray:
     """
 
+    :param pca_result_path:
     :param after_pca_data_path:
     :param data:
     :param before_pca_data_path:
@@ -21,16 +19,16 @@ def pca(data: list[list], before_pca_data_path: str, after_pca_data_path: str, p
     :return:
     """
     save_before_apply_pca(data, before_pca_data_path)
-    logger.info("Run PCA task")
-    commands: list[str] = [*pca_loader, before_pca_data_path, f"{num_components}", pc_value_path, mean_value_path]
+    print("Run PCA task")
+    commands: list[str] = [*pca_loader, before_pca_data_path, f"{num_components}", pc_value_path, mean_value_path,
+                           pca_result_path]
 
     loaded_audio = subprocess.check_output(commands)
     loaded_audio: str = loaded_audio.decode("utf-8")
     result: ndarray = pca_post_process(loaded_audio)
-    logger.info("Done PCA task")
+    print("Done PCA task")
     save_after_pca(result, after_pca_data_path)
     return result
-
 
 
 def pca_post_process(data: str) -> ndarray:
@@ -48,7 +46,6 @@ def pca_post_process(data: str) -> ndarray:
     return result
 
 
-
 def save_before_apply_pca(data: list[list], data_path: str) -> None:
     """
 
@@ -61,7 +58,6 @@ def save_before_apply_pca(data: list[list], data_path: str) -> None:
             line = ",".join(str(d) for d in r)
             f.writelines(line + "\n")
     print(f"[DONE] data write in {data_path}")
-
 
 
 def save_after_pca(data: ndarray, after_save_path: str) -> None:

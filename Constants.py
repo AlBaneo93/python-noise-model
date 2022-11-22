@@ -1,35 +1,3 @@
-# For Noise
-n_ffts = 2048
-n_step = 1024
-n_wins = 1024
-n_mels = 16  # 64
-n_mfcc = 20
-noise_sr = 22050
-
-audio_loader = ["java", "-jar", "/data/AudioLoader_New.jar"]
-noise_model_save_path = "/data/noise_svm_trained.model"
-
-noise_before_pca_data_path = "/data/noise_before_pca.txt"
-noise_after_pca_data_path = "/data/noise_after_pca.txt"
-noise_pc_value_path = "/data/noise_pc_value.txt"
-noise_mean_value_path = "/data/noise_mean_value.txt"
-
-resample_result_path = "/data/resample_result"
-noise_offset = 0.25
-noise_cut_time = 8
-
-# For VIBE
-vib_model_save_path = "/data/vib_svm_trained.model"
-
-vibe_before_pca_data_path = "/data/vibe_before_pca.txt"
-vibe_after_pca_data_path = "/data/vibe_after_pca.txt"
-vibe_pc_value_path = "/data/vibe_pc_value.txt"
-vibe_mean_value_path = "/data/vibe_mean_value.txt"
-
-vibe_sr = 2400
-vibe_offset = 0.25
-vibe_cut_time = 8
-
 # Common
 path_train = "/data/CS_MOTORNOISE_DATA"
 path_test = "/data/TEST_CS_MOTORNOISE_DATA"
@@ -37,6 +5,69 @@ path_test = "/data/TEST_CS_MOTORNOISE_DATA"
 svm_cost = 1
 svm_type = 0
 svm_kernel = 0
+num_components = 50
 
 pca_loader = ["java", "-jar", "/data/PCA.jar"]
-num_components = 50
+
+
+# For Noise Common
+n_ffts = 2048
+n_step = 1024
+n_wins = 1024
+n_mels = 16  # 64
+n_mfcc = 20
+noise_sr = 22050
+noise_offset = 0.25
+noise_cut_time = 8
+
+audio_loader = ["java", "-jar", "/data/AudioLoader_New.jar"]
+
+resample_result_path = "/data/resample_result"
+
+# For Noise Train
+noise_train_prefix = "/data/noise/train"
+
+noise_before_pca_data_path = f"{noise_train_prefix}/before_pca_{num_components}.txt"
+noise_after_pca_data_path = f"{noise_train_prefix}/after_pca_{num_components}.txt"
+noise_pc_value_path = f"{noise_train_prefix}/pc_value_{num_components}.txt"
+noise_mean_value_path = f"{noise_train_prefix}/mean_value_{num_components}.txt"
+noise_pca_result_path = f"{noise_train_prefix}/pca_result_{num_components}.txt"
+
+noise_model_save_path = f"/data/noise/svm_trained_{num_components}.model"
+
+# For Noise Test
+noise_test_prefix = "/data/noise/test"
+
+test_noise_before_pca_data_path = f"{noise_test_prefix}/before_pca_{num_components}.txt"
+test_noise_after_pca_data_path = f"{noise_test_prefix}/after_pca_{num_components}.txt"
+test_noise_pc_value_path = f"{noise_test_prefix}/pc_value_{num_components}.txt"
+test_noise_mean_value_path = f"{noise_test_prefix}/mean_value_{num_components}.txt"
+test_noise_pca_result_path = f"{noise_test_prefix}/pca_result_{num_components}.txt"
+
+# ---------------------------------------------------------------------------------------------------
+
+# For Vibe Common
+vibe_sr = 2400
+vibe_offset = 0.25
+vibe_cut_time = 8
+
+# For VIBE Train
+
+vibe_train_prefix = "/data/vibe/train"
+
+vibe_before_pca_data_path = f"{vibe_train_prefix}/before_pca_{num_components}.txt"
+vibe_after_pca_data_path = f"{vibe_train_prefix}/after_pca_{num_components}.txt"
+vibe_pc_value_path = f"{vibe_train_prefix}/pc_value_{num_components}.txt"
+vibe_mean_value_path = f"{vibe_train_prefix}/mean_value_{num_components}.txt"
+vibe_pca_result_path = f"{vibe_train_prefix}/pca_result_{num_components}.txt"
+
+vibe_model_save_path = f"/data/vibe/svm_trained_{num_components}.model"
+
+# For VIBE Test
+vibe_test_prefix = "/data/vibe/test"
+
+test_vibe_before_pca_data_path = f"{vibe_test_prefix}/before_pca_{num_components}.txt"
+test_vibe_after_pca_data_path = f"{vibe_test_prefix}/after_pca_{num_components}.txt"
+test_vibe_pc_value_path = f"{vibe_test_prefix}/pc_value_{num_components}.txt"
+test_vibe_mean_value_path = f"{vibe_test_prefix}/mean_value_{num_components}.txt"
+test_vibe_pca_result_path = f"{vibe_test_prefix}/pca_result_{num_components}.txt"

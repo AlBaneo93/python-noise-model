@@ -7,8 +7,11 @@ import numpy as np
 from libsvm.svmutil import svm_train, svm_save_model, svm_predict
 from numpy import ndarray
 
-import Constants
-from Duration import Duration
+from Constants import path_train, noise_before_pca_data_path, \
+    noise_after_pca_data_path, noise_pc_value_path, noise_mean_value_path, noise_pca_result_path, path_test, \
+    test_noise_before_pca_data_path, test_noise_after_pca_data_path, test_noise_pc_value_path, \
+    test_noise_mean_value_path, test_noise_pca_result_path, svm_cost, svm_kernel, noise_model_save_path
+from Decorators import Duration
 from PCA_Loader import pca
 # Sound processing
 from util import parallel_get_features_from_files
@@ -16,50 +19,35 @@ from util import parallel_get_features_from_files
 
 @Duration
 def get_train_dataset_noise() -> tuple[ndarray, ndarray]:
-    print('[NOISE][LOAD] Extracting features from train dataset: {}'.format(Constants.path_train))
-    list_files_normal = glob.glob(os.path.join(Constants.path_train, 'normal_*.wav'))
-    list_files_anomal = glob.glob(os.path.join(Constants.path_train, 'anomal_*.wav'))
-    list_files_reduce = glob.glob(os.path.join(Constants.path_train, 'reducer_*.wav'))
-    list_files_normal.sort()
-    list_files_anomal.sort()
-    list_files_reduce.sort()
+    print('[NOISE][LOAD] Extracting features from train dataset: {}'.format(path_train))
+    list_files_normal: list[str] = sorted(glob.glob(os.path.join(path_train, 'normal_*.wav')))
+    list_files_abnormal: list[str] = sorted(glob.glob(os.path.join(path_train, 'anomal_*.wav')))
+    list_files_reduce: list[str] = sorted(glob.glob(os.path.join(path_train, 'reducer_*.wav')))
 
-    if len(list_files_normal) + len(list_files_anomal) + len(list_files_reduce) != 0:
-        print(f"[NOISE] 데이터 추출 시작")
-        # NOTE : 2D Array이어야 함
+    if len(list_files_normal) + len(list_files_abnormal) + len(list_files_reduce) != 0:
+        print(f"[NOISE] 학습 데이터 추출 시작")
         data_mel_normal = parallel_get_features_from_files(list_files_normal)
-        a=1
-        # data_mel_normal = get_features_from_files(list_files_normal)
-        # NOTE : 2D Array이어야 함
-        data_mel_anomal = parallel_get_features_from_files(list_files_anomal)
-        # data_mel_anomal = get_features_from_files(list_files_anomal)
-        # NOTE : 2D Array이어야 함
+        data_mel_abnormal = parallel_get_features_from_files(list_files_abnormal)
         data_mel_reduce = parallel_get_features_from_files(list_files_reduce)
-        # data_mel_reduce = get_features_from_files(list_files_reduce)
-        print(f"[NOISE] 데이터 추출 완료")
+        print(f"[NOISE] 학습 데이터 추출 완료")
 
-        # Merge normal and abnormal data
-        # kph_dataset = data_mel_normal + data_mel_anomal + data_mel_reduce
-        kph_dataset = data_mel_normal + data_mel_anomal + data_mel_reduce  # 2d array
-        # print(f"전체 데이터셋 크기 : {len(kph_dataset)}")
-        # print(f"Apply PCA")
-        # kph_dataset = pca(kph_dataset)  # 전체 데이터에 PCA 적용
-        # print(f"Train dataset size : {len(kph_dataset)}")
+        kph_dataset = data_mel_normal + data_mel_abnormal + data_mel_reduce  # 2d array
 
         # Make labels
-        kph_labels_normal = np.zeros(len(data_mel_normal), dtype=int)
-        kph_labels_anomal = np.ones(len(data_mel_anomal), dtype=int)
-        kph_labels_reduce = np.ones(len(data_mel_reduce), dtype=int) * 2
-        kph_labels = np.array(list(kph_labels_normal) + list(kph_labels_anomal) + list(kph_labels_reduce))
+        kph_labels_normal = [0 for _ in data_mel_normal]
+        kph_labels_abnormal = [1 for _ in data_mel_abnormal]
+        kph_labels_reduce = [2 for _ in data_mel_reduce]
+        kph_labels = np.array(kph_labels_normal + kph_labels_abnormal + kph_labels_reduce)
 
         # reshape the train dataset
         # kph_dataset_reshaped = reshape_features(kph_dataset)
         # NOTE : 2D array여야 함
-        kph_dataset_reshaped = pca(kph_dataset,
-                                   Constants.noise_before_pca_data_path,
-                                   Constants.noise_after_pca_data_path,
-                                   Constants.noise_pc_value_path,
-                                   Constants.noise_mean_value_path)
+        kph_dataset_reshaped: ndarray = pca(kph_dataset,
+                                            noise_before_pca_data_path,
+                                            noise_after_pca_data_path,
+                                            noise_pc_value_path,
+                                            noise_mean_value_path,
+                                            noise_pca_result_path)
 
         return kph_labels, kph_dataset_reshaped
 
@@ -69,29 +57,32 @@ def get_train_dataset_noise() -> tuple[ndarray, ndarray]:
 @Duration
 def get_test_dataset_noise() -> tuple[ndarray, ndarray]:
     # Test dataset
-    print('[NOISE][LOAD] Extracting features from test dataset: {}'.format(Constants.path_test))
+    print('[NOISE][LOAD] Extracting features from test dataset: {}'.format(path_test))
 
-    list_files_normal_test = glob.glob(os.path.join(Constants.path_test, 'Test_normal_*.wav'))
-    list_files_anomal_test = glob.glob(os.path.join(Constants.path_test, 'Test_anomal_*.wav'))
-    list_files_reduce_test = glob.glob(os.path.join(Constants.path_test, 'Test_reducer_*.wav'))
-    list_files_normal_test.sort()
-    list_files_anomal_test.sort()
-    list_files_reduce_test.sort()
+    list_files_normal_test: list[str] = sorted(glob.glob(os.path.join(path_test, 'Test_normal_*.wav')))
+    list_files_abnormal_test: list[str] = sorted(glob.glob(os.path.join(path_test, 'Test_anomal_*.wav')))
+    list_files_reduce_test: list[str] = sorted(glob.glob(os.path.join(path_test, 'Test_reducer_*.wav')))
 
-    if len(list_files_normal_test) + len(list_files_anomal_test) + len(list_files_reduce_test) != 0:
-        data_mel_normal_test = parallel_get_features_from_files(list_files_normal_test)  # 2d array
-        data_mel_anomal_test = parallel_get_features_from_files(list_files_anomal_test)  # 2d array
-        data_mel_reduce_test = parallel_get_features_from_files(list_files_reduce_test)  # 2d array
+    if len(list_files_normal_test) + len(list_files_abnormal_test) + len(list_files_reduce_test) != 0:
+        print(f"[NOISE] 테스트 데이터 추출 시작")
+        data_mel_normal_test: list[list] = parallel_get_features_from_files(list_files_normal_test)  # 2d array
+        data_mel_abnormal_test: list[list] = parallel_get_features_from_files(list_files_abnormal_test)  # 2d array
+        data_mel_reduce_test: list[list] = parallel_get_features_from_files(list_files_reduce_test)  # 2d array
+        print(f"[NOISE] 테스트 데이터 추출 완료")
 
-        kph_dataset_test = data_mel_normal_test + data_mel_anomal_test + data_mel_reduce_test
-        kph_labels_normal_test = np.zeros(len(data_mel_normal_test), dtype=int)
-        kph_labels_anomal_test = np.ones(len(data_mel_anomal_test), dtype=int)
-        kph_labels_reduce_test = np.ones(len(data_mel_reduce_test), dtype=int) * 2
-        kph_labels_test = np.array(
-            list(kph_labels_normal_test) + list(kph_labels_anomal_test) + list(kph_labels_reduce_test))
+        kph_dataset_test: list[list] = data_mel_normal_test + data_mel_abnormal_test + data_mel_reduce_test
 
-        # TODO : 테스트 데이터에 대한 경로 지정하기
-        kph_dataset_test = pca(kph_dataset_test, "", "", "", "")
+        kph_labels_normal_test: list[int] = [0 for _ in data_mel_normal_test]
+        kph_labels_abnormal_test: list[int] = [1 for _ in data_mel_abnormal_test]
+        kph_labels_reduce_test: list[int] = [2 for _ in data_mel_reduce_test]
+        kph_labels_test: ndarray = np.array(kph_labels_normal_test + kph_labels_abnormal_test + kph_labels_reduce_test)
+
+        kph_dataset_test: ndarray = pca(kph_dataset_test,
+                                        test_noise_before_pca_data_path,
+                                        test_noise_after_pca_data_path,
+                                        test_noise_pc_value_path,
+                                        test_noise_mean_value_path,
+                                        test_noise_pca_result_path)
 
         return kph_labels_test, kph_dataset_test
 
@@ -106,19 +97,20 @@ def main():
     train_label, train_dataset = get_train_dataset_noise()
     if len(train_dataset) != 0:
         print(f"[NOISE] 학습 시작")
-        svm_model = svm_train(train_label, train_dataset, f'-c {Constants.svm_cost} -t {Constants.svm_kernel} -q')
+        svm_model = svm_train(train_label, train_dataset, f'-c {svm_cost} -t {svm_kernel} -q')
         print(f"[NOISE] 학습 종료")
 
         # Save the trained SVM model
-        svm_save_model(model_file_name=Constants.noise_model_save_path, model=svm_model)
-
+        svm_save_model(model_file_name=noise_model_save_path, model=svm_model)
+        print(f'[NOISE] [SAVE] {noise_model_save_path}')
         print('[NOISE][DONE] SVM model has been trained and saved')
 
         test_labels, test_dataset = get_test_dataset_noise()
-
+        print(f"[NOISE] 테스트 시작")
         # Evaluation with features of the test dataset
         p_label, p_acc, p_val = svm_predict(test_labels, test_dataset, svm_model)
-        print('[NOISE] Accuracy: {}'.format(p_val))
+        print(f"[NOISE] 테스트 종료")
+        print('[NOISE] Accuracy: {}'.format(p_acc))
     else:
         print(f"[NOISE] 오류 발생")
 

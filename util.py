@@ -6,7 +6,6 @@ from numpy import ndarray
 from parmap import parmap
 
 from Constants import noise_sr, n_ffts, n_mels, n_step, noise_offset, noise_cut_time
-from Duration import Duration
 from Loader import load_audio
 from melspec import get_mel
 
@@ -67,7 +66,7 @@ def amplitude_to_decibel(S, amin=1e-5, top_db=80.0):
 def extract_features(file) -> list:
     loaded_data: ndarray = load_audio(file)
     loaded_data = loaded_data[int(noise_sr * noise_offset):int(noise_sr * (noise_cut_time + noise_offset))]
-
+    # print(f"file -- {file} / load_length :: {len(loaded_data)}")
     if len(loaded_data) / noise_sr < noise_cut_time:
         return []
 
@@ -80,8 +79,6 @@ def extract_features(file) -> list:
 
     data_mel = np.dot(np.abs(data_mel.T), mel_fbank.T)
     data_mel = power_to_decibel(data_mel).T
-
-    # # TODO : 1D 형태가 되는지 확인하기
 
     return my_reshape(data_mel)
 
