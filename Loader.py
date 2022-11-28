@@ -6,7 +6,6 @@ import numpy as np
 from numpy import ndarray
 
 import Constants
-from Decorators import Duration
 
 
 # def load_parallel(file_list: list[str]):
@@ -15,7 +14,7 @@ from Decorators import Duration
 #     p.map(loader, file_list)
 
 
-@Duration
+
 def load_audio(file_name: str) -> ndarray:
     output_name: str = make_output_name(file_name)
 
@@ -28,7 +27,7 @@ def load_audio(file_name: str) -> ndarray:
     return post_process(loaded_audio)
 
 
-@Duration
+
 def post_process(result: str) -> ndarray:
     result_list = result.replace("\b", "") \
         .replace(" ", "") \
@@ -46,7 +45,7 @@ def make_output_name(input_name: str) -> str:
     return f"{Constants.resample_result_path}/resampled_{arr[-1]}"
 
 
-@Duration
+
 def clear_before_resample():
     shutil.rmtree(Constants.resample_result_path)
     Path(Constants.resample_result_path).mkdir(Constants.resample_result_path, parents=True, exist_ok=True)

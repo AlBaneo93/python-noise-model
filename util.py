@@ -10,19 +10,6 @@ from Loader import load_audio
 from melspec import get_mel
 
 
-# def sliding_window(arr: ndarray, sample_rate: int = 22050) -> ndarray:
-#     step_size = sample_rate * 4
-#     win_size = sample_rate * 8
-#     idx = 0
-#     result: list[list] = []
-#     while arr.size > idx + win_size:
-#         tmp_window = arr[idx: idx + win_size]
-#         result.append(tmp_window)
-#         idx += step_size
-#
-#     return np.array(result)
-
-
 # Reshape the extracted features so to be 1-dim arrays
 def reshape_features(features: ndarray) -> ndarray:
     if len(features) > 0:
@@ -65,22 +52,21 @@ def amplitude_to_decibel(S, amin=1e-5, top_db=80.0):
 # Extract features from an .wav file
 def extract_features(file) -> list:
     loaded_data: ndarray = load_audio(file)
-    loaded_data = loaded_data[int(noise_sr * noise_offset):int(noise_sr * (noise_cut_time + noise_offset))]
+    # loaded_data = loaded_data[int(noise_sr * noise_offset):int(noise_sr * (noise_cut_time + noise_offset))]
     # print(f"file -- {file} / load_length :: {len(loaded_data)}")
     if len(loaded_data) / noise_sr < noise_cut_time:
         return []
 
     # Extract Mel-spectrogram from each divided signal
     mel_fbank = get_mel(sr=noise_sr, n_ffts=n_ffts, n_mels=n_mels)
-
     # for signal in signal_divided:
     # NOTE : shape : (1025, 22)
     data_mel: ndarray = librosa.stft(y=loaded_data, n_fft=n_ffts, hop_length=n_step)
-
     data_mel = np.dot(np.abs(data_mel.T), mel_fbank.T)
     data_mel = power_to_decibel(data_mel).T
-
-    return my_reshape(data_mel)
+    reslt = my_reshape(data_mel)
+    a = 5
+    return reslt
 
 
 def my_reshape(arr: ndarray) -> list:

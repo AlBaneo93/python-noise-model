@@ -1,6 +1,6 @@
 # Common
-path_train = "/data/CS_MOTORNOISE_DATA"
-path_test = "/data/TEST_CS_MOTORNOISE_DATA"
+noise_path_train = "/data/CS_MOTORNOISE_DATA"
+noise_path_test = "/data/TEST_CS_MOTORNOISE_DATA"
 
 svm_cost = 1
 svm_type = 0
@@ -14,7 +14,7 @@ pca_loader = ["java", "-jar", "/data/PCA.jar"]
 n_ffts = 2048
 n_step = 1024
 n_wins = 1024
-n_mels = 16  # 64
+n_mels = 64  # 64
 n_mfcc = 20
 noise_sr = 22050
 noise_offset = 0.25
@@ -33,7 +33,7 @@ noise_pc_value_path = f"{noise_train_prefix}/pc_value_{num_components}.txt"
 noise_mean_value_path = f"{noise_train_prefix}/mean_value_{num_components}.txt"
 noise_pca_result_path = f"{noise_train_prefix}/pca_result_{num_components}.txt"
 
-noise_model_save_path = f"/data/noise/svm_trained_{num_components}.model"
+noise_model_save_path = f"/data/results/noise_svm_trained_{num_components}.model"
 
 # For Noise Test
 noise_test_prefix = "/data/noise/test"
@@ -47,7 +47,10 @@ test_noise_pca_result_path = f"{noise_test_prefix}/pca_result_{num_components}.t
 # ---------------------------------------------------------------------------------------------------
 
 # For Vibe Common
-vibe_sr = 2400
+vibe_path_train="/data/QZ_FCEV_IDLE_DATA"
+vibe_path_test ="/data/TEST_QZ_FCEV_IDLE_DATA"
+
+vibe_sr = 2048
 vibe_offset = 0.25
 vibe_cut_time = 8
 
@@ -61,7 +64,7 @@ vibe_pc_value_path = f"{vibe_train_prefix}/pc_value_{num_components}.txt"
 vibe_mean_value_path = f"{vibe_train_prefix}/mean_value_{num_components}.txt"
 vibe_pca_result_path = f"{vibe_train_prefix}/pca_result_{num_components}.txt"
 
-vibe_model_save_path = f"/data/vibe/svm_trained_{num_components}.model"
+vibe_model_save_path = f"/data/results/vibe_svm_trained_{num_components}.model"
 
 # For VIBE Test
 vibe_test_prefix = "/data/vibe/test"
